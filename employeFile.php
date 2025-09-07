@@ -1,5 +1,12 @@
 <?php
 
+session_start();
+
+if (!isset($_SESSION['name'])) {
+    header("Location: login.php");
+   
+}
+
 
 
 include_once("user.class.php");
@@ -61,8 +68,14 @@ if(isset($_GET['EditId'])){
     $search=User::find($id);
 }
 
-
-
+if (isset($_GET['logout'])) {
+    $logout=$_GET['logout'];
+    if($logout){
+        session_unset();
+        session_destroy();
+        header("location:login.php");
+    }
+}
 
 
 
@@ -85,154 +98,106 @@ if(isset($_GET['EditId'])){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <style>
-        /* Center page content */
-        body {
-            font-family: Arial, sans-serif;
-            background: #fafafa;
+     <style>
+        body{
             display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
+            place-content: center;
+            gap: 20px;
         }
-
-        /* Tiny container */
-        div {
-            width: 220px;
-            /* much smaller width */
-            padding: 10px;
-            background: #fff;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            text-align: center;
-        }
-
-        /* Heading */
-        h1 {
-            font-size: 1rem;
-            margin-bottom: 8px;
-        }
-
-        /* Form */
-        form {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        label {
-            font-size: 0.8rem;
-            text-align: left;
-        }
-
-        input[type="text"],
-        input[type="password"] {
-            padding: 3px;
-            width: 100%;
-            font-size: 0.8rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        /* Submit button */
-        input[type="submit"] {
-            margin-top: 6px;
-            padding: 4px;
-            width: 100%;
-            font-size: 0.8rem;
-            background: #007acc;
-            border: none;
-            color: #fff;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background: #005f99;
-        }
-
-        /* Super compact table */
-        table {
-            width: 50%;
-            /* fits the small container */
+        table,th,td{
             border-collapse: collapse;
-            margin-top: 8px;
-            font-size: 0.7rem;
+            border: 1px solid black;
+            padding: 10px;
         }
 
-        th,
-        td {
-            border: 1px solid #ccc;
-            padding: 10px 10px;
-            /* very small padding */
-            text-align: left;
+        tr:nth-child(even){
+           background-color: lightgrey;
         }
-
-        th {
-            background: #eee;
-        }
-
-        tr {
-            height: 18px;
-            /* smaller row height */
-        }
-    </style>
+     </style>
+   
 </head>
 
 <body>
+         <h1>Welcome <?php echo $_SESSION["role"] ??  "User" ; ?></h1>
+
+
     <?php
     echo  User::getAll();
     
     ?>
 
-    <div>
-        <h1>Data Table</h1>
-        <form action="" method="post">
-            <label for="n">Name
-                <input type="text" name="name">
-            </label><br>
-            <label for="m">Mail
-                <input type="text" name="email">
-            </label><br>
-            <label for="p">Password
-                <input type="text" name="password">
-            </label><br>
-            <label for="c">Contact
-                <input type="text" name="contact">
-            </label><br>
-            <label for="e">Employe Name:
-                <input type="text" name="employe">
-            </label>
-            <input type="submit" name="submit">
-        </form>
-    </div>
+    <div style="max-width:400px; margin:20px auto; padding:25px; background:#fff; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1); font-family:Arial,sans-serif;">
+    <h1 style="text-align:center; margin-bottom:20px; color:#444; font-size:22px;">Data Table</h1>
+    <form action="" method="post">
+        <label for="n" style="display:block; margin-bottom:15px; font-weight:600; color:#555;">
+            Name
+            <input type="text" name="name" style="width:100%; padding:10px 12px; margin-top:5px; border:1px solid #ccc; border-radius:8px; font-size:14px; box-sizing:border-box;">
+        </label>
+        <label for="m" style="display:block; margin-bottom:15px; font-weight:600; color:#555;">
+            Mail
+            <input type="text" name="email" style="width:100%; padding:10px 12px; margin-top:5px; border:1px solid #ccc; border-radius:8px; font-size:14px;">
+        </label>
+        <label for="p" style="display:block; margin-bottom:15px; font-weight:600; color:#555;">
+            Password
+            <input type="text" name="password" style="width:100%; padding:10px 12px; margin-top:5px; border:1px solid #ccc; border-radius:8px; font-size:14px;">
+        </label>
+        <label for="c" style="display:block; margin-bottom:15px; font-weight:600; color:#555;">
+            Contact
+            <input type="text" name="contact" style="width:100%; padding:10px 12px; margin-top:5px; border:1px solid #ccc; border-radius:8px; font-size:14px;">
+        </label>
+        <label for="e" style="display:block; margin-bottom:15px; font-weight:600; color:#555;">
+            Employe Name:
+            <input type="text" name="employe" style="width:100%; padding:10px 12px; margin-top:5px; border:1px solid #ccc; border-radius:8px; font-size:14px;">
+        </label>
+        <input type="submit" name="submit" value="Submit" style="width:100%; background:#4CAF50; color:white; padding:12px; font-size:15px; border:none; border-radius:8px; cursor:pointer;">
+    </form>
+</div>
 
 
-    <div>
-        <h1>Update Table</h1>
-        <form action="" method="post">
-            <label for="id">ID:
-               <input type="hidden" name="id" value="<?php echo isset($search['id']) ? $search['id'] : ''; ?>">
 
-            </label>
-            <label for="n">Name
-                <input type="text" name="name" value=" <?php echo $search['name']?>">
-            </label><br>
-            <label for="m">Mail
-                <input type="text" name="email" value=" <?php echo $search['email']?>">
-            </label><br>
-            <label for="p">Password
-                <input type="text" name="password" value=" <?php echo $search['password']?>">
-            </label><br>
-            <label for="c">Contact
-                <input type="text" name="contact" value=" <?php echo $search['contact']?>">
-            </label><br>
-            <label for="e">Employe Name:
-                <input type="text" name="employe" value=" <?php echo $search['role_id']?>">
-            </label>
-            <input type="submit" name="update_btn" value="UPDATE">
-        </form>
-    </div>
+   <div style="max-width:400px; margin:20px auto; padding:25px; background:#fff; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1); font-family:Arial,sans-serif;">
+    <h1 style="text-align:center; margin-bottom:20px; color:#444; font-size:22px;">Update Table</h1>
+    <form action="" method="post">
+        <label for="id" style="display:block; margin-bottom:15px; font-weight:600; color:#555;">
+            ID:
+            <input type="hidden" name="id" value="<?php echo isset($search['id']) ? $search['id'] : ''; ?>">
+        </label>
+
+        <label for="n" style="display:block; margin-bottom:15px; font-weight:600; color:#555;">
+            Name
+            <input type="text" name="name" value="<?php echo $search['name'] ?? ''; ?>" style="width:100%; padding:10px 12px; margin-top:5px; border:1px solid #ccc; border-radius:8px; font-size:14px;">
+        </label>
+
+        <label for="m" style="display:block; margin-bottom:15px; font-weight:600; color:#555;">
+            Mail
+            <input type="text" name="email" value="<?php echo $search['email'] ?? ''; ?>" style="width:100%; padding:10px 12px; margin-top:5px; border:1px solid #ccc; border-radius:8px; font-size:14px;">
+        </label>
+
+        <label for="p" style="display:block; margin-bottom:15px; font-weight:600; color:#555;">
+            Password
+            <input type="text" name="password" value="<?php echo $search['password'] ?? ''; ?>" style="width:100%; padding:10px 12px; margin-top:5px; border:1px solid #ccc; border-radius:8px; font-size:14px;">
+        </label>
+
+        <label for="c" style="display:block; margin-bottom:15px; font-weight:600; color:#555;">
+            Contact
+            <input type="text" name="contact" value="<?php echo $search['contact'] ?? ''; ?>" style="width:100%; padding:10px 12px; margin-top:5px; border:1px solid #ccc; border-radius:8px; font-size:14px;">
+        </label>
+
+        <label for="e" style="display:block; margin-bottom:15px; font-weight:600; color:#555;">
+            Employe Name:
+            <input type="text" name="employe" value="<?php echo $search['role_id'] ?? ''; ?>" style="width:100%; padding:10px 12px; margin-top:5px; border:1px solid #ccc; border-radius:8px; font-size:14px;">
+        </label>
+
+        <input type="submit" name="update_btn" value="UPDATE" style="width:100%; background:#4CAF50; color:white; padding:12px; font-size:15px; border:none; border-radius:8px; cursor:pointer;">
+    </form>
+</div>
+
+
+<a href="employeFile.php?logout=1" 
+   style="padding: 10px ;
+        " >
+   Logout
+</a>
 </body>
 
 </html>
